@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration & QR Code</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .qr-container, .language-container, .date-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .qr-code {
+            margin-top: 10px;
+        }
+
+        .language-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .language-container button {
+            background-color: #007bff;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .language-container button:hover {
+            background-color: #0056b3;
+        }
+
+        .language-container button.active {
+            background-color: #ffc107;
+        }
+
+        .date-container {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .date-container span {
+            display: block;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2 id="form-title">Registration</h2>
+    <form id="registrationForm">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="surname" placeholder="Surname" required>
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="tel" id="phone" placeholder="Phone Number" required>
+        <button type="submit">Register</button>
+    </form>
+
+    <div class="qr-container" id="qrContainer">
+        <h3 id="qr-title">Your Personal QR Code:</h3>
+        <img id="qrCode" class="qr-code" src="" alt="QR Code">
+        <div class="date-container" id="dateContainer">
+            <span id="currentDate"></span>
+            <span id="currentTime"></span>
+        </div>
+        <div class="language-container">
+            <button id="en" class="active">English</button>
+            <button id="hy">Հայերեն</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const registrationForm = document.getElementById('registrationForm');
+    const qrContainer = document.getElementById('qrContainer');
+    const qrCode = document.getElementById('qrCode');
+    const currentDateElem = document.getElementById('currentDate');
+    const currentTimeElem = document.getElementById('currentTime');
+    const formTitle = document.getElementById('form-title');
+    const qrTitle = document.getElementById('qr-title');
+    const enButton = document.getElementById('en');
+    const hyButton = document.getElementById('hy');
+
+    // Function to display the current date and time
+    function displayDateTime() {
+        const now = new Date();
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        currentDateElem.textContent = now.toLocaleDateString('en-US', options);
+        currentTimeElem.textContent = now.toLocaleTimeString();
+    }
+
+    registrationForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        // Generate a unique QR code (using an external QR code generator)
+        const codeData = 'User: ' + Math.random().toString(36).substr(2, 9);
+        const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${codeData}`;
+
+        // Display the QR code
+        qrCode.src = qrCodeUrl;
+
+        // Show date and time
+        displayDateTime();
+
+        // Hide the registration form and show the QR code and date/time
+        registrationForm.style.display = 'none';
+        qrContainer.style.display = 'block';
+
+        // Refresh date and time every second
+        setInterval(displayDateTime, 1000);
+    });
+
+    // Language switcher functionality
+    enButton.addEventListener('click', () => {
+        formTitle.textContent = 'Registration';
+        qrTitle.textContent = 'Your Personal QR Code:';
+        enButton.classList.add('active');
+        hyButton.classList.remove('active');
+    });
+
+    hyButton.addEventListener('click', () => {
+        formTitle.textContent = 'Գրանցում';
+        qrTitle.textContent = 'Ձեր Անձնական QR կոդը՝';
+        hyButton.classList.add('active');
+        enButton.classList.remove('active');
+    });
+</script>
+
+</body>
+</html>
